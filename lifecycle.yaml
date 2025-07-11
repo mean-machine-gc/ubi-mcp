@@ -1,0 +1,20 @@
+- when: login
+  and:
+    - user is not logged in
+  branches:
+    - then:
+        - user-logged-in
+      andOutcome:
+        - user status is online
+
+- when: logout
+  and:
+    - user is logged in
+  branches:
+    - then:
+        - user-logged-out
+      andOutcome:
+        - user status is offline
+
+- invariants:
+  - User status must be either online or offline

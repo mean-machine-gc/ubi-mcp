@@ -1,0 +1,33 @@
+{
+  "name": "ubi-mcp",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Official MCP server of the Ubi Framework",
+  "main": "dist/server.js",
+  "bin": {
+    "ubi-mcp": "./dist/server.js"
+  },
+  "exports": {
+    ".": "./dist/server.js",
+    "./prompts": "./dist/prompts/index.js",
+    "./tools": "./dist/tools/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsx src/server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Giovanni Chiodi",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.15.0",
+    "fastmcp": "^3.8.4",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.12",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
