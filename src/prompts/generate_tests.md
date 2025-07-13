@@ -31,11 +31,9 @@ Generate these files:
 ```
 __tests__/
 ├── shared-helpers.ts          # Common utilities and test data
-├── create-<entity>.spec.ts    # Create operation tests
-├── update-<entity>.spec.ts    # Update operation tests  
-├── change-<specific>.spec.ts  # Specific operation tests
-├── deactivate-<entity>.spec.ts # Deactivate operation tests
-└── reactivate-<entity>.spec.ts # Reactivate operation tests
+├── <operation1>.spec.ts    # operation tests
+├── <operation2>.spec.ts    # another operation tests  
+├── # more <operation>.spec.ts for remaining operations
 ```
 
 ## Shared Helpers File Template
