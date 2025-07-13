@@ -5,6 +5,13 @@ import { handleFileOperations, handleLifecycleValidation } from "./tools/index.j
 import { FileOperationArgs, GenerationArgs, SpecsGenerationArgs, ValidationArgs } from "./types.js";
 import { z } from 'zod'
 import { validateYAMLContent, validateAggregateConsistency, quickValidationCheck, extractAggregateStates } from "./utils/yaml-validation/validator.js";
+import { addAnalyzeDomainPatters } from "./tools/analyze_domain_patterns/analyze_domain_patterns.js";
+import { addBuilsOperationIncrementally } from "./tools/build_operation_incrementally/build_operation_incrementally.js";
+import { addEnhanceBusinessRules } from "./tools/enhance_business_rules/enance_business_rules.js";
+import { addGenerateAssertions } from "./tools/generate_assertions/generate_assertions.js";
+import { addGenerateTypes } from "./tools/generate_types/generate_types.js";
+import { addGenerateDecider } from "./tools/generate_decider/generate_decider.js";
+import { addGenerateTests } from "./tools/generate_tests/generate_tests.js";
 
 
 const mcp = new FastMCP({
@@ -15,6 +22,13 @@ const mcp = new FastMCP({
 mcp.on("connect", (event) => {
   console.log("Client connected:", event.session);
   //add tools with sampling
+  addAnalyzeDomainPatters(mcp)(event.session)
+  addBuilsOperationIncrementally(mcp)(event.session)
+  addEnhanceBusinessRules(mcp)(event.session)
+  addGenerateAssertions(mcp)(event.session)
+  addGenerateTypes(mcp)(event.session)
+  addGenerateDecider(mcp)(event.session)
+  addGenerateTests(mcp)(event.session)
 });
 
 mcp.addPrompt(
@@ -56,53 +70,53 @@ mcp.addPrompt(
 //       },
 //     );
 
-mcp.addPrompt(
-      {
-        name: "generate_specs",
-        description: "Generate technical specs.yaml from lifecycle.yaml",
-        arguments: [
-          {
-            name: "yaml_content",
-            description: "Content of the lifecycle.yaml file",
-            required: true
-          }
-        ],
-        load: async (args) => generateSpecsPrompt(args as unknown as GenerationArgs)
-      },
+// mcp.addPrompt(
+//       {
+//         name: "generate_specs",
+//         description: "Generate technical specs.yaml from lifecycle.yaml",
+//         arguments: [
+//           {
+//             name: "yaml_content",
+//             description: "Content of the lifecycle.yaml file",
+//             required: true
+//           }
+//         ],
+//         load: async (args) => generateSpecsPrompt(args as unknown as GenerationArgs)
+//       },
       
-    );
+//     );
 
-mcp.addPrompt(
-      {
-        name: "generate_tests",
-        description: "Generate test cases from specs.yaml",
-        arguments: [
-          {
-            name: "specs_content",
-            description: "Content of the specs.yaml file",
-            required: true
-          }
-        ],
-        load: async (args) => generateTestsPrompt(args as unknown as SpecsGenerationArgs)
-      },
+// mcp.addPrompt(
+//       {
+//         name: "generate_tests",
+//         description: "Generate test cases from specs.yaml",
+//         arguments: [
+//           {
+//             name: "specs_content",
+//             description: "Content of the specs.yaml file",
+//             required: true
+//           }
+//         ],
+//         load: async (args) => generateTestsPrompt(args as unknown as SpecsGenerationArgs)
+//       },
       
-    );
+//     );
 
-mcp.addPrompt(
-      {
-        name: "generate_implementation",
-        description: "Generate implementation code from specs.yaml",
-        arguments: [
-          {
-            name: "specs_content",
-            description: "Content of the specs.yaml file",
-            required: true
-          }
-        ],
-         load: async (args) => generateImplementationPrompt(args as unknown as SpecsGenerationArgs)
-      },
+// mcp.addPrompt(
+//       {
+//         name: "generate_implementation",
+//         description: "Generate implementation code from specs.yaml",
+//         arguments: [
+//           {
+//             name: "specs_content",
+//             description: "Content of the specs.yaml file",
+//             required: true
+//           }
+//         ],
+//          load: async (args) => generateImplementationPrompt(args as unknown as SpecsGenerationArgs)
+//       },
       
-    );
+//     );
 
 
 
@@ -121,77 +135,77 @@ mcp.addPrompt(
       
 //     );
 
-mcp.addTool(
-      {
-        name: "validate_lifecycle",
-        description: "Validate lifecycle.yaml content",
-        parameters: z.object({
-          yaml_content: z.string().describe('content of the lifecycle.yaml file')
-        }),
-        execute: async (args) => handleLifecycleValidation(args as unknown as ValidationArgs)
-      },
+// mcp.addTool(
+//       {
+//         name: "validate_lifecycle",
+//         description: "Validate lifecycle.yaml content",
+//         parameters: z.object({
+//           yaml_content: z.string().describe('content of the lifecycle.yaml file')
+//         }),
+//         execute: async (args) => handleLifecycleValidation(args as unknown as ValidationArgs)
+//       },
       
-    );
+//     );
 
 
 //Validation tools:
 // Example MCP tool usage pattern
-export const mcpTools = {
-  validateYAML: {
-    name: 'validate_yaml',
-    description: 'Validate YAML content against schema',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        content: { type: 'string' },
-        fileType: { type: 'string', enum: ['lifecycle', 'assertions', 'decider'] }
-      },
-      required: ['content', 'fileType']
-    },
-    handler: validateYAMLContent
-  },
+// export const mcpTools = {
+//   validateYAML: {
+//     name: 'validate_yaml',
+//     description: 'Validate YAML content against schema',
+//     inputSchema: {
+//       type: 'object',
+//       properties: {
+//         content: { type: 'string' },
+//         fileType: { type: 'string', enum: ['lifecycle', 'assertions', 'decider'] }
+//       },
+//       required: ['content', 'fileType']
+//     },
+//     handler: validateYAMLContent
+//   },
   
-  validateAggregate: {
-    name: 'validate_aggregate_consistency',
-    description: 'Check consistency across all aggregate files',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        lifecycle: { type: 'string' },
-        assertions: { type: 'string' },
-        decider: { type: 'string' }
-      }
-    },
-    handler: validateAggregateConsistency
-  },
+//   validateAggregate: {
+//     name: 'validate_aggregate_consistency',
+//     description: 'Check consistency across all aggregate files',
+//     inputSchema: {
+//       type: 'object',
+//       properties: {
+//         lifecycle: { type: 'string' },
+//         assertions: { type: 'string' },
+//         decider: { type: 'string' }
+//       }
+//     },
+//     handler: validateAggregateConsistency
+//   },
   
-  quickCheck: {
-    name: 'quick_validation_check',
-    description: 'Quick validation for real-time feedback',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        content: { type: 'string' },
-        fileType: { type: 'string', enum: ['lifecycle', 'assertions', 'decider'] }
-      },
-      required: ['content', 'fileType']
-    },
-    handler: quickValidationCheck
-  },
+//   quickCheck: {
+//     name: 'quick_validation_check',
+//     description: 'Quick validation for real-time feedback',
+//     inputSchema: {
+//       type: 'object',
+//       properties: {
+//         content: { type: 'string' },
+//         fileType: { type: 'string', enum: ['lifecycle', 'assertions', 'decider'] }
+//       },
+//       required: ['content', 'fileType']
+//     },
+//     handler: quickValidationCheck
+//   },
   
-  extractStates: {
-    name: 'extract_aggregate_states',
-    description: 'Extract state information from lifecycle file',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        lifecycleContent: { type: 'string' }
-      },
-      required: ['lifecycleContent']
-    },
-    handler: extractAggregateStates
-  }
-};
+//   extractStates: {
+//     name: 'extract_aggregate_states',
+//     description: 'Extract state information from lifecycle file',
+//     inputSchema: {
+//       type: 'object',
+//       properties: {
+//         lifecycleContent: { type: 'string' }
+//       },
+//       required: ['lifecycleContent']
+//     },
+//     handler: extractAggregateStates
+//   }
+// };
 
 // ============================================================================
 // BOOTSTRAP
