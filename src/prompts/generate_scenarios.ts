@@ -1,5 +1,5 @@
 import { GetPromptResult } from "@modelcontextprotocol/sdk/types.js";
-import { buildPromptMessages } from "../utils.js";
+import { buildPromptMessages } from "../utils/utils.js";
 import { GenerationArgs } from '../types.js'
 
 export const generateScenariosPrompt = async (args: GenerationArgs): Promise<GetPromptResult> => {

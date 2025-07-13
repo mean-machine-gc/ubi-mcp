@@ -1,5 +1,5 @@
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { validateLifecycle, toCallToolResult } from "../utils.js";
+import { validateLifecycle, toCallToolResult } from "../utils/utils.js";
 import { ValidationArgs } from "../types";
 
 export const handleLifecycleValidation = async (args: ValidationArgs): Promise<CallToolResult> => {

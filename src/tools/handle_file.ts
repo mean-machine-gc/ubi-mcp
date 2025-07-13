@@ -1,5 +1,5 @@
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { saveFile, loadFile, listFiles, deleteFile, failure, toCallToolResult } from "../utils.js";
+import { saveFile, loadFile, listFiles, deleteFile, failure, toCallToolResult } from "../utils/utils.js";
 import { FileOperationArgs, FileOperationResult } from "../types.js";
 
 const saveFileInWorkspace = saveFile('');

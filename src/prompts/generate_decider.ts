@@ -1,5 +1,5 @@
 import { GetPromptResult } from "@modelcontextprotocol/sdk/types.js";
-import { buildPromptMessages } from "../utils.js";
+import { buildPromptMessages } from "../utils/utils.js";
 import { SpecsGenerationArgs } from "../types.js";
 
 export const generateImplementationPrompt = async (args: SpecsGenerationArgs): Promise<GetPromptResult> => {

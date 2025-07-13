@@ -1,7 +1,8 @@
 import { GetPromptResult, CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { DeleteResult, FileInfo, FileOperationResult, FileType, ListResult, LoadResult, SaveResult, ValidationResult } from './types.js';
+import { DeleteResult, FileInfo, FileOperationResult, FileType, ListResult, LoadResult, SaveResult, ValidationResult } from '../types.js';
+import { FastMCPSession } from 'fastmcp';
 
 // ============================================================================
 // PURE FUNCTIONS & UTILITIES
@@ -34,6 +35,27 @@ export const validResult = (message: string, summary?: Record<string, unknown>):
 
 export const invalidResult = (errors: readonly string[], warnings?: readonly string[]): ValidationResult =>
   ({ valid: false, errors, warnings });
+
+
+//sampling
+export const sampleLlm = (session: FastMCPSession) => 
+    (systemPrompt: string) => 
+    async (userPrompt: string) => {
+    return await session.requestSampling({
+        messages: [
+                {
+                    role: "user",
+                    content: {
+                        type: "text",
+                        text: userPrompt,
+                    },
+                },
+            ],
+            systemPrompt,
+            includeContext: "thisServer",
+            maxTokens: 100, 
+        })
+}
 
 // ============================================================================
 // FILE OPERATION FUNCTIONS

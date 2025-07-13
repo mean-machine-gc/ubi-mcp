@@ -4,6 +4,7 @@ import { generateImplementationPrompt, generateLifecycleConversationPrompt, gene
 import { handleFileOperations, handleLifecycleValidation } from "./tools/index.js";
 import { FileOperationArgs, GenerationArgs, SpecsGenerationArgs, ValidationArgs } from "./types.js";
 import { z } from 'zod'
+import { validateYAMLContent, validateAggregateConsistency, quickValidationCheck, extractAggregateStates } from "./utils/yaml-validation/validator.js";
 
 
 const mcp = new FastMCP({
@@ -11,6 +12,10 @@ const mcp = new FastMCP({
         version: "1.0.0",
     });
 
+mcp.on("connect", (event) => {
+  console.log("Client connected:", event.session);
+  //add tools with sampling
+});
 
 mcp.addPrompt(
       {
@@ -128,6 +133,65 @@ mcp.addTool(
       
     );
 
+
+//Validation tools:
+// Example MCP tool usage pattern
+export const mcpTools = {
+  validateYAML: {
+    name: 'validate_yaml',
+    description: 'Validate YAML content against schema',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        content: { type: 'string' },
+        fileType: { type: 'string', enum: ['lifecycle', 'assertions', 'decider'] }
+      },
+      required: ['content', 'fileType']
+    },
+    handler: validateYAMLContent
+  },
+  
+  validateAggregate: {
+    name: 'validate_aggregate_consistency',
+    description: 'Check consistency across all aggregate files',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        lifecycle: { type: 'string' },
+        assertions: { type: 'string' },
+        decider: { type: 'string' }
+      }
+    },
+    handler: validateAggregateConsistency
+  },
+  
+  quickCheck: {
+    name: 'quick_validation_check',
+    description: 'Quick validation for real-time feedback',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        content: { type: 'string' },
+        fileType: { type: 'string', enum: ['lifecycle', 'assertions', 'decider'] }
+      },
+      required: ['content', 'fileType']
+    },
+    handler: quickValidationCheck
+  },
+  
+  extractStates: {
+    name: 'extract_aggregate_states',
+    description: 'Extract state information from lifecycle file',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        lifecycleContent: { type: 'string' }
+      },
+      required: ['lifecycleContent']
+    },
+    handler: extractAggregateStates
+  }
+};
 
 // ============================================================================
 // BOOTSTRAP
