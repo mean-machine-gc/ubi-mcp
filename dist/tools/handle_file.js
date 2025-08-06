@@ -1,4 +1,4 @@
-import { saveFile, loadFile, listFiles, deleteFile, failure, toCallToolResult } from "../utils.js";
+import { saveFile, loadFile, listFiles, deleteFile, failure, toCallToolResult } from "../utils/utils.js";
 const saveFileInWorkspace = saveFile('');
 const loadFileFromWorkspace = loadFile('');
 const listFilesInWorkspace = listFiles('');

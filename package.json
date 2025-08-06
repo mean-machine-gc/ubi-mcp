@@ -25,7 +25,13 @@
     "@sinclair/typebox": "^0.34.37",
     "fastmcp": "^3.8.4",
     "rxjs": "^7.8.2",
-    "yaml": "^2.8.0"
+    "yaml": "^2.8.0",
+    "graphology": "^0.26.0",
+    "graphology-operators": "^1.6.1",
+    "graphology-shortest-path": "^2.1.0",
+    "graphology-traversal": "^0.3.1",
+    "graphology-types": "^0.24.8",
+    "graphology-utils": "^2.5.2"
   },
   "devDependencies": {
     "@types/node": "^24.0.12",

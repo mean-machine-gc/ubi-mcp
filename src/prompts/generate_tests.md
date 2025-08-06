@@ -86,7 +86,7 @@ export const evolveState = (event: any, currentState?: <Aggregate>) => {
   return evolution({ evt: event, state: currentState });
 };
 
-// Common test data
+// Common test data example 
 export const validIds = {
   userId: 'user-123456789',
   generatedId: /^[a-f0-9-]{36}$/,  // UUID pattern

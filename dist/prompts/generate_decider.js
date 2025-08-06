@@ -1,4 +1,4 @@
-import { buildPromptMessages } from "../utils.js";
+import { buildPromptMessages } from "../utils/utils.js";
 export const generateImplementationPrompt = async (args) => {
     const { specs_content } = args;
     const systemPrompt = `You are a senior developer creating production-ready decider pattern implementation.

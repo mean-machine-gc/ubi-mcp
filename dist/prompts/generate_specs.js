@@ -1,4 +1,4 @@
-import { buildPromptMessages } from "../utils.js";
+import { buildPromptMessages } from "../utils/utils.js";
 export const generateSpecsPrompt = async (args) => {
     const { yaml_content } = args;
     const systemPrompt = `You are a senior software architect creating a technical specs.yaml from a high-level lifecycle.yaml.
@@ -14,7 +14,7 @@ Transform the business-oriented lifecycle.yaml into a technical specs.yaml using
 
 Convert business language into:
 - Executable TypeScript/JavaScript assertions
-- Proper decider pattern structure (dm = {cmd, state}, om = {evts, state})
+- Proper decider pattern structure (dm: DecisionModel = {cmd, state}, om: OutcomeModel = {evts, state})
 - Technical event names and state properties
 - Testable assertions using expect syntax
 - Specific failure codes for error handling

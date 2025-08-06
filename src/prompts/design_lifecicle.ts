@@ -178,22 +178,9 @@ As a system administrator, I want to create user accounts so that new users can 
 
 You have access to intelligent sampling-based tools that can assist during the conversation:
 
-### Foundation & Analysis Tools
-- **analyze_domain_patterns**: Analyzes industry patterns and best practices for the domain through iterative sampling
-- **build_operation_incrementally**: Builds complete operation specifications through progressive analysis
-- **enhance_business_rules**: Enhances existing rules through multi-perspective analysis (security, edge cases, compliance)
-
-### When to Use These Tools
-- **At the start**: Use \`analyze_domain_patterns\` when the user mentions a domain to provide intelligent foundation
-- **For each operation**: Use \`build_operation_incrementally\` to help design complex operations step-by-step
-- **For refinement**: Use \`enhance_business_rules\` when reviewing or improving the lifecycle specification
-
 ### Generation Tools (Available After Design)
-- **generate_assertions**: Creates assertions.yaml with implementation specifications
-- **generate_types**: Creates types.ts with TypeScript type definitions  
-- **generate_decider**: Creates decider.ts with executable business logic
-- **generate_tests**: Creates comprehensive Jest test suites
-- **validate_drift**: Analyzes consistency across all specification files
+**implement_decider**: implement the decider up to the evolution step, with tests!
+
 
 ## Your Enhanced Approach
 
@@ -203,7 +190,133 @@ You have access to intelligent sampling-based tools that can assist during the c
 4. **Enhance iteratively**: Use \`enhance_business_rules\` to add security, edge cases, and compliance considerations
 5. **Validate and refine**: Continuously improve the specification through tool-assisted analysis
 
-Start by understanding what aggregate they want to model. When appropriate, proactively use the available tools to provide intelligent, well-researched guidance rather than relying solely on general knowledge.`;
+Start by understanding what aggregate they want to model. When appropriate, proactively use the available tools to provide intelligent, well-researched guidance rather than relying solely on general knowledge.
+
+Remember, you also have available tools to create an EventStorming diagram to make the yaml information visible to the user. Using the tools you will be able
+to create commands, events, aggregates, preconditions, guards, branching conditions that will be displayed on the user screen.
+
+Additionally, using the EventStorming tools you can enrich the elements with text and code to help the user visualize and refine the model details.
+
+Once the main behaviour is clear, you might attempt writing the typescript domain model for a given aggregate. The model must account for all the commands, events, guards, preconditions, and branching logic discussed and present in the model for that aggregate.
+The domain model need to include:
+
+- Domain primitives with ts-docs annotations: simple values of the domain model
+- Value objects
+- Inner entities
+- the Aggregate type itself
+
+If entities or the aggregate have different states, there should be a base type and a type for each state, and a final union type for the entitity or aggregate.
+
+Here is an example:
+
+\`\`\`ts
+// ====================
+// RECEIVED MESSAGE AGGREGATE
+// ====================
+
+/**
+ * Unique identifier for a received message
+ * @format uuid
+ * @pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
+ * @example "123e4567-e89b-12d3-a456-426614174000"
+ * @example "987fcdeb-51a2-43d1-9c87-123456789abc"
+ */
+export type ReceivedMessageId = string
+
+/**
+ * Reference to the system that sent this message
+ * Must match an existing SystemId
+ * @format uuid
+ * @pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
+ * @example "550e8400-e29b-41d4-a716-446655440000"
+ */
+export type ReceivedMessageSystemId = string
+
+/**
+ * Reference to the service that sent this message
+ * Must match an existing ServiceId within the system
+ * @format uuid
+ * @pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
+ * @example "123e4567-e89b-12d3-a456-426614174000"
+ */
+export type ReceivedMessageServiceId = string
+
+/**
+ * Type of message according to CloudEvents and our classification
+ * @example "command"
+ * @example "event"  
+ * @example "query"
+ */
+export type ReceivedMessageType = 'command' | 'event' | 'query'
+
+/**
+ * CloudEvent type/name extracted from the CloudEvent payload
+ * @pattern ^[a-zA-Z0-9._-]+$
+ * @minLength 1
+ * @maxLength 200
+ * @example "com.example.user.created"
+ * @example "user.profile.updated"
+ * @example "payment.completed"
+ */
+export type ReceivedMessageEventName = string
+
+/**
+ * Version of the event schema
+ * @pattern ^\d+\.\d+(\.\d+)?$
+ * @example "1.0"
+ * @example "2.1.0"
+ */
+export type ReceivedMessageVersion = string
+
+/**
+ * ISO 8601 timestamp for received message events
+ * @format date-time
+ * @pattern ^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$
+ * @example "2025-07-31T10:30:45.123Z"
+ */
+export type ReceivedMessageTimestamp = string
+
+/**
+ * CloudEvent delivery format
+ * @example "structured"
+ * @example "binary"
+ */
+export type CloudEventFormat = 'structured' | 'binary'
+
+// Received Message Value Objects
+export type ReceivedMessageServiceReference = {
+  systemId: ReceivedMessageSystemId
+  serviceId: ReceivedMessageServiceId
+}
+
+export type ReceivedMessageBase = {
+  messageId: ReceivedMessageId
+  serviceRef: ReceivedMessageServiceReference
+  cloudEvent: any // Reconstructed CloudEvent (normalized format)
+  rawPayload: any // Original body payload as received
+  headers: Record<string, string> // HTTP headers as received
+  format: CloudEventFormat // How the CloudEvent was delivered
+  messageType: ReceivedMessageType
+  eventName: ReceivedMessageEventName
+  version: ReceivedMessageVersion
+  receivedAt: ReceivedMessageTimestamp
+}
+
+export type PendingReceivedMessage = ReceivedMessageBase & {
+  state: 'pending'
+}
+
+export type ProcessedReceivedMessage = ReceivedMessageBase & {
+  state: 'processed'
+  processedAt: ReceivedMessageTimestamp
+}
+
+export type ReceivedMessage = 
+  | PendingReceivedMessage 
+  | ProcessedReceivedMessage
+\`\`\`
+
+`;
 
   const userPrompt = `Let's design a lifecycle.yaml file together!
 
@@ -224,3 +337,28 @@ Let's start! What's the main business entity or process you want to model?`;
 
   return buildPromptMessages(systemPrompt)(userPrompt);
 };
+
+
+// ## Available Tools During Design Process
+
+// You have access to intelligent sampling-based tools that can assist during the conversation:
+
+
+// ### Foundation & Analysis Tools
+// - **analyze_domain_patterns**: Analyzes industry patterns and best practices for the domain through iterative sampling
+// - **build_operation_incrementally**: Builds complete operation specifications through progressive analysis
+// - **enhance_business_rules**: Enhances existing rules through multi-perspective analysis (security, edge cases, compliance)
+
+// ### When to Use These Tools
+// - **At the start**: Use \`analyze_domain_patterns\` when the user mentions a domain to provide intelligent foundation
+// - **For each operation**: Use \`build_operation_incrementally\` to help design complex operations step-by-step
+// - **For refinement**: Use \`enhance_business_rules\` when reviewing or improving the lifecycle specification
+
+// ### Generation Tools (Available After Design)
+// **implement_decider**: implement the decider up to the evolution step, with tests!
+
+// - **generate_assertions**: Creates assertions.yaml with implementation specifications
+// - **generate_types**: Creates types.ts with TypeScript type definitions  
+// - **generate_decider**: Creates decider.ts with executable business logic
+// - **generate_tests**: Creates comprehensive Jest test suites
+// - **validate_drift**: Analyzes consistency across all specification files

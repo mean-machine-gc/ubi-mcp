@@ -1,4 +1,4 @@
-import { buildPromptMessages } from "../utils.js";
+import { buildPromptMessages } from "../utils/utils.js";
 export const generateTestsPrompt = async (args) => {
     const { specs_content } = args;
     const systemPrompt = `You are a QA engineer creating comprehensive test plans from technical specs.yaml.

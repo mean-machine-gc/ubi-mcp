@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { FastMCP } from "fastmcp";
-import { generateImplementationPrompt, generateLifecycleConversationPrompt, generateScenariosPrompt, generateSpecsPrompt, generateTestsPrompt } from "./prompts/index.js";
+import { generateLifecycleConversationPrompt, generateScenariosPrompt, generateSpecsPrompt, generateTestsPrompt } from "./prompts/index.js";
 import { handleFileOperations, handleLifecycleValidation } from "./tools/index.js";
 import { FileOperationArgs, GenerationArgs, SpecsGenerationArgs, ValidationArgs } from "./types.js";
 import { z } from 'zod'
@@ -12,24 +12,56 @@ import { addGenerateAssertions } from "./tools/generate_assertions/generate_asse
 import { addGenerateTypes } from "./tools/generate_types/generate_types.js";
 import { addGenerateDecider } from "./tools/generate_decider/generate_decider.js";
 import { addGenerateTests } from "./tools/generate_tests/generate_tests.js";
+import { addImplement } from "./tools/implement/implement.js";
+import { implementTypesPrompt } from "./prompts/implement_types.js";
+import { implementEvolutionsPrompt } from "./prompts/implement_evolutions.js";
+import { testEvolvePrompt } from "./prompts/test_evolve.js";
+import { implementDecisionPrompt } from "./prompts/implement_decision.js";
+import { testOperationPrompt } from "./prompts/test_operation.js";
+import { generateUbistormerPrompt } from "./prompts/ubistormer.js";
+import { registerEventStormingTools } from "./tools/ubistorming/add-tools.js";
 
 
 const mcp = new FastMCP({
         name: 'Ubi Toolkit MCP Server',
         version: "1.0.0",
+        instructions: `
+        Ubi mcp server provides promts to AI-assisted Domain-driven Design
+        `
     });
 
-mcp.on("connect", (event) => {
-  console.log("Client connected:", event.session);
-  //add tools with sampling
-  addAnalyzeDomainPatters(mcp)(event.session)
-  addBuilsOperationIncrementally(mcp)(event.session)
-  addEnhanceBusinessRules(mcp)(event.session)
-  addGenerateAssertions(mcp)(event.session)
-  addGenerateTypes(mcp)(event.session)
-  addGenerateDecider(mcp)(event.session)
-  addGenerateTests(mcp)(event.session)
-});
+// addImplement(mcp)
+
+// mcp.on("connect", (event) => {
+//   console.log("Client connected:", event.session);
+//   //add tools with sampling
+//   addAnalyzeDomainPatters(mcp)(event.session)
+//   addBuilsOperationIncrementally(mcp)(event.session)
+//   addEnhanceBusinessRules(mcp)(event.session)
+//   addGenerateAssertions(mcp)(event.session)
+//   addGenerateTypes(mcp)(event.session)
+//   addGenerateDecider(mcp)(event.session)
+//   addGenerateTests(mcp)(event.session)
+// });
+
+await registerEventStormingTools(mcp)
+
+mcp.addPrompt(
+      {
+        name: "ubistormer",
+        description: "Have a conversation with the user to collaborate on an EventStorming project",
+        arguments: [
+          {
+            name: "jsonUrl",
+            description: "The absolute path where the json containing the graph is",
+            required: true
+          },
+        ],
+      load: async (args) => {
+        return generateUbistormerPrompt(args as {jsonUrl: string})
+      }
+    }
+  );
 
 mcp.addPrompt(
       {
@@ -52,6 +84,177 @@ mcp.addPrompt(
       }
     }
   );
+
+  mcp.addPrompt(
+        {
+          name: "implement_evolutions",
+          description: "Implement evolutions for the decider pattern from a lifecycle.yaml file and aggregate and events types",
+          arguments: [
+            {
+              name: "domain",
+              description: "The domain/system being modeled (e.g., 'shopping cart', 'book loan')",
+              required: false
+            },
+             {
+              name: "types",
+              description: "The types for the aggregate",
+              required: false
+            },
+             {
+              name: "events",
+              description: "The event types for the aggregate",
+              required: false
+            },
+            {
+              name: "lifecycle_yaml",
+              description: "Current lifecycle.yaml content being worked on",
+              required: false
+            }
+          ],
+        load: async (args) => {
+          return implementEvolutionsPrompt(args)
+        }
+      }
+    );
+
+    mcp.addPrompt(
+        {
+          name: "implement_types",
+          description: "Implement aggreagate and events types from a lifecycle.yamle file",
+          arguments: [
+            {
+              name: "domain",
+              description: "The domain/system being modeled (e.g., 'shopping cart', 'book loan')",
+              required: false
+            },
+             {
+              name: "types",
+              description: "The types for the aggregate",
+              required: false
+            },
+             {
+              name: "events",
+              description: "The event types for the aggregate",
+              required: false
+            },
+             {
+              name: "evolutions",
+              description: "The evolutions implementations to test",
+              required: false
+            },
+            {
+              name: "lifecycle_yaml",
+              description: "Current lifecycle.yaml content being worked on",
+              required: false
+            }
+          ],
+        load: async (args) => {
+          return  implementTypesPrompt(args)
+        }
+      }
+    );
+
+     mcp.addPrompt(
+        {
+          name: "test_evolve",
+          description: "Creates a comprehensive test suite for the evolve function",
+          arguments: [
+            {
+              name: "domain",
+              description: "The domain/system being modeled (e.g., 'shopping cart', 'book loan')",
+              required: false
+            },
+            {
+              name: "lifecycle_yaml",
+              description: "Current lifecycle.yaml content being worked on",
+              required: false
+            }
+          ],
+        load: async (args) => {
+          return  testEvolvePrompt(args)
+        }
+      }
+    );
+
+
+    mcp.addPrompt(
+        {
+          name: "implement_decision",
+          description: "Implement decision step of the decider pattarn for a given operation",
+          arguments: [
+            {
+              name: "domain",
+              description: "The domain/system being modeled (e.g., 'shopping cart', 'book loan')",
+              required: false
+            },
+            {
+              name: "operation",
+              description: "The operation to implement",
+              required: false
+            },
+             {
+              name: "types",
+              description: "The types for the aggregate",
+              required: false
+            },
+             {
+              name: "events",
+              description: "The event types for the aggregate",
+              required: false
+            },
+            {
+              name: "lifecycle_yaml",
+              description: "Current lifecycle.yaml content being worked on",
+              required: false
+            }
+          ],
+        load: async (args) => {
+          return  implementDecisionPrompt(args)
+        }
+      }
+    );
+
+    mcp.addPrompt(
+        {
+          name: "test_operation",
+          description: "Implement a comprehensive test suite for a given operation",
+          arguments: [
+            {
+              name: "domain",
+              description: "The domain/system being modeled (e.g., 'shopping cart', 'book loan')",
+              required: false
+            },
+            {
+              name: "operation",
+              description: "The operation to implement",
+              required: false
+            },
+             {
+              name: "types",
+              description: "The types for the aggregate",
+              required: false
+            },
+             {
+              name: "events",
+              description: "The event types for the aggregate",
+              required: false
+            },
+            {
+              name: "lifecycle_yaml",
+              description: "Current lifecycle.yaml content being worked on",
+              required: false
+            },
+            {
+              name: "decision_implementation",
+              description: "The implementation of the decision step for the given operation",
+              required: false
+            }
+          ],
+        load: async (args) => {
+          return  testOperationPrompt(args)
+        }
+      }
+    );
 
 // mcp.addPrompt(
 //       {

@@ -1,0 +1,153 @@
+{
+  "nodes": [
+    {
+      "id": "admin",
+      "label": "Admin",
+      "type": "actor",
+      "description": "Admin user managing webhook systems"
+    },
+    {
+      "id": "system",
+      "label": "System",
+      "type": "aggregate",
+      "description": "System aggregate containing name, description, owner info and state"
+    },
+    {
+      "id": "register-system-cmd",
+      "label": "Register System",
+      "type": "command",
+      "description": "Create new system with name, description, owner name and email"
+    },
+    {
+      "id": "system-registered-evt",
+      "label": "System Registered",
+      "type": "event",
+      "description": "System successfully created and activated"
+    },
+    {
+      "id": "update-system-cmd",
+      "label": "Update System",
+      "type": "command",
+      "description": "Update system metadata and owner information"
+    },
+    {
+      "id": "system-updated-evt",
+      "label": "System Updated",
+      "type": "event",
+      "description": "System details successfully updated"
+    },
+    {
+      "id": "deactivate-system-cmd",
+      "label": "Deactivate System",
+      "type": "command",
+      "description": "Temporarily disable system with reason"
+    },
+    {
+      "id": "system-deactivated-evt",
+      "label": "System Deactivated",
+      "type": "event",
+      "description": "System deactivated with reason recorded"
+    },
+    {
+      "id": "reactivate-system-cmd",
+      "label": "Reactivate System",
+      "type": "command",
+      "description": "Re-enable previously deactivated system"
+    },
+    {
+      "id": "system-reactivated-evt",
+      "label": "System Reactivated",
+      "type": "event",
+      "description": "System reactivated and services can be enabled"
+    },
+    {
+      "id": "delete-system-cmd",
+      "label": "Delete System",
+      "type": "command",
+      "description": "Permanently remove system (no active services)"
+    },
+    {
+      "id": "system-deleted-evt",
+      "label": "System Deleted",
+      "type": "event",
+      "description": "System permanently removed and archived"
+    }
+  ],
+  "edges": [
+    {
+      "source": "admin",
+      "target": "register-system-cmd",
+      "label": "issues"
+    },
+    {
+      "source": "register-system-cmd",
+      "target": "system",
+      "label": "on"
+    },
+    {
+      "source": "register-system-cmd",
+      "target": "system-registered-evt",
+      "label": "then"
+    },
+    {
+      "source": "admin",
+      "target": "update-system-cmd",
+      "label": "issues"
+    },
+    {
+      "source": "update-system-cmd",
+      "target": "system",
+      "label": "on"
+    },
+    {
+      "source": "update-system-cmd",
+      "target": "system-updated-evt",
+      "label": "then"
+    },
+    {
+      "source": "admin",
+      "target": "deactivate-system-cmd",
+      "label": "issues"
+    },
+    {
+      "source": "deactivate-system-cmd",
+      "target": "system",
+      "label": "on"
+    },
+    {
+      "source": "deactivate-system-cmd",
+      "target": "system-deactivated-evt",
+      "label": "then"
+    },
+    {
+      "source": "admin",
+      "target": "reactivate-system-cmd",
+      "label": "issues"
+    },
+    {
+      "source": "reactivate-system-cmd",
+      "target": "system",
+      "label": "on"
+    },
+    {
+      "source": "reactivate-system-cmd",
+      "target": "system-reactivated-evt",
+      "label": "then"
+    },
+    {
+      "source": "admin",
+      "target": "delete-system-cmd",
+      "label": "issues"
+    },
+    {
+      "source": "delete-system-cmd",
+      "target": "system",
+      "label": "on"
+    },
+    {
+      "source": "delete-system-cmd",
+      "target": "system-deleted-evt",
+      "label": "then"
+    }
+  ]
+}
