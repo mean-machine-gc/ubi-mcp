@@ -1,25 +1,25 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 import { FastMCP } from "fastmcp";
-import { generateLifecycleConversationPrompt, generateScenariosPrompt, generateSpecsPrompt, generateTestsPrompt } from "./prompts/index.js";
-import { handleFileOperations, handleLifecycleValidation } from "./tools/index.js";
-import { FileOperationArgs, GenerationArgs, SpecsGenerationArgs, ValidationArgs } from "./types.js";
+import { generateLifecycleConversationPrompt, generateScenariosPrompt, generateSpecsPrompt, generateTestsPrompt } from "./prompts/index";
+import { handleFileOperations, handleLifecycleValidation } from "./tools/index";
+import { FileOperationArgs, GenerationArgs, SpecsGenerationArgs, ValidationArgs } from "./types";
 import { z } from 'zod'
-import { validateYAMLContent, validateAggregateConsistency, quickValidationCheck, extractAggregateStates } from "./utils/yaml-validation/validator.js";
-import { addAnalyzeDomainPatters } from "./tools/analyze_domain_patterns/analyze_domain_patterns.js";
-import { addBuilsOperationIncrementally } from "./tools/build_operation_incrementally/build_operation_incrementally.js";
-import { addEnhanceBusinessRules } from "./tools/enhance_business_rules/enance_business_rules.js";
-import { addGenerateAssertions } from "./tools/generate_assertions/generate_assertions.js";
-import { addGenerateTypes } from "./tools/generate_types/generate_types.js";
-import { addGenerateDecider } from "./tools/generate_decider/generate_decider.js";
-import { addGenerateTests } from "./tools/generate_tests/generate_tests.js";
-import { addImplement } from "./tools/implement/implement.js";
-import { implementTypesPrompt } from "./prompts/implement_types.js";
-import { implementEvolutionsPrompt } from "./prompts/implement_evolutions.js";
-import { testEvolvePrompt } from "./prompts/test_evolve.js";
-import { implementDecisionPrompt } from "./prompts/implement_decision.js";
-import { testOperationPrompt } from "./prompts/test_operation.js";
-import { generateUbistormerPrompt } from "./prompts/ubistormer.js";
-import { registerEventStormingTools } from "./tools/ubistorming/add-tools.js";
+import { validateYAMLContent, validateAggregateConsistency, quickValidationCheck, extractAggregateStates } from "./utils/yaml-validation/validator";
+import { addAnalyzeDomainPatters } from "./tools/analyze_domain_patterns/analyze_domain_patterns";
+import { addBuilsOperationIncrementally } from "./tools/build_operation_incrementally/build_operation_incrementally";
+import { addEnhanceBusinessRules } from "./tools/enhance_business_rules/enance_business_rules";
+import { addGenerateAssertions } from "./tools/generate_assertions/generate_assertions";
+import { addGenerateTypes } from "./tools/generate_types/generate_types";
+import { addGenerateDecider } from "./tools/generate_decider/generate_decider";
+import { addGenerateTests } from "./tools/generate_tests/generate_tests";
+import { addImplement } from "./tools/implement/implement";
+import { implementTypesPrompt } from "./prompts/implement_types";
+import { implementEvolutionsPrompt } from "./prompts/implement_evolutions";
+import { testEvolvePrompt } from "./prompts/test_evolve";
+import { implementDecisionPrompt } from "./prompts/implement_decision";
+import { testOperationPrompt } from "./prompts/test_operation";
+import { generateUbistormerPrompt } from "./prompts/ubistormer";
+import { registerEventStormingTools } from "./tools/ubistorming/add-tools";
 
 
 const mcp = new FastMCP({
@@ -44,7 +44,7 @@ const mcp = new FastMCP({
 //   addGenerateTests(mcp)(event.session)
 // });
 
-await registerEventStormingTools(mcp)
+registerEventStormingTools(mcp)
 
 mcp.addPrompt(
       {

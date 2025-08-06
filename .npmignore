@@ -1,0 +1,31 @@
+# Development files
+dist/
+tsconfig.json
+.gitignore
+.git/
+node_modules/
+*.log
+.DS_Store
+
+# Test files
+test/
+tests/
+__tests__/
+*.test.ts
+*.spec.ts
+
+# Local files
+.env
+.env.local
+lifecycle.yaml
+ubistorming.json
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+.claude/
+
+# Build artifacts
+*.tsbuildinfo

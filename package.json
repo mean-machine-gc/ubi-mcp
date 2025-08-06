@@ -3,20 +3,28 @@
   "type": "module",
   "version": "1.0.0",
   "description": "Official MCP server of the Ubi Framework",
-  "main": "dist/server.js",
+  "main": "src/server.ts",
   "bin": {
-    "ubi-mcp": "./dist/server.js"
+    "ubi-mcp": "./src/server.ts"
   },
   "exports": {
-    ".": "./dist/server.js",
-    "./prompts": "./dist/prompts/index.js",
-    "./tools": "./dist/tools/index.js"
+    ".": "./src/server.ts",
+    "./prompts": "./src/prompts/index.ts",
+    "./tools": "./src/tools/index.ts"
   },
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "tsx src/server.ts",
     "dev": "tsx src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["mcp", "model-context-protocol", "ubi", "framework", "server"],
+  "homepage": "https://github.com/giovanni/ubi-mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/giovanni/ubi-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/giovanni/ubi-mcp/issues"
   },
   "author": "Giovanni Chiodi",
   "license": "MIT",
@@ -31,11 +39,11 @@
     "graphology-shortest-path": "^2.1.0",
     "graphology-traversal": "^0.3.1",
     "graphology-types": "^0.24.8",
-    "graphology-utils": "^2.5.2"
+    "graphology-utils": "^2.5.2",
+    "tsx": "^4.19.0"
   },
   "devDependencies": {
     "@types/node": "^24.0.12",
-    "tsx": "^4.19.0",
     "typescript": "^5.7.0"
   }
 }

@@ -1,4 +1,4 @@
-import { GetPromptResult } from "@modelcontextprotocol/sdk/types.js";
+import { GetPromptResult } from "@modelcontextprotocol/sdk/types";
 import { buildPromptMessages } from "../utils/utils.js";
 import { GenerationArgs } from '../types.js'
 

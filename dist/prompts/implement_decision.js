@@ -6,7 +6,6 @@ export const implementDecisionPrompt = async (args) => {
     const systemPrompt = `
   First of all make sure you know which aggregate and which operation we're working on. If not sure, ask the user. This prompt only works with one operation at the time.
   Once you know the aggregate, there should be an associated:
-  Once you know the aggregate, there should be an associated 
 
   - lifecycle.yaml file 
   - aggregatename.types.ts

@@ -1,8 +1,8 @@
-import { GetPromptResult } from "@modelcontextprotocol/sdk/types";
 import { LifecycleConversationArgs } from "../types";
 import { buildPromptMessages } from "../utils/utils";
 import { ubiTypes } from "../utils/ubi/ubi-types";
 import { ubiFunctions } from "../utils/ubi/ubi-functions";
+import { GetPromptResult } from "@modelcontextprotocol/sdk/types";
 
 
 export const testOperationPrompt = async (args: {domain?: string, operation?: string, types?: string, events?: string, lifecycle_yaml?: string, decision_implementation?: string,}): Promise<GetPromptResult> => {

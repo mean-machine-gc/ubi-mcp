@@ -1,4 +1,4 @@
-import { GetPromptResult, CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import { GetPromptResult, CallToolResult } from '@modelcontextprotocol/sdk/types';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { DeleteResult, FileInfo, FileOperationResult, FileType, ListResult, LoadResult, SaveResult, ValidationResult } from '../types.js';

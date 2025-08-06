@@ -1,14 +1,19 @@
 #!/usr/bin/env node
 import { FastMCP } from "fastmcp";
-import { generateLifecycleConversationPrompt } from "./prompts/index.js";
-import { implementTypesPrompt } from "./prompts/implement_types.js";
-import { implementEvolutionsPrompt } from "./prompts/implement_evolutions.js";
-import { testEvolvePrompt } from "./prompts/test_evolve.js";
-import { implementDecisionPrompt } from "./prompts/implement_decision.js";
-import { testOperationPrompt } from "./prompts/test_operation.js";
+import { generateLifecycleConversationPrompt } from "./prompts/index";
+import { implementTypesPrompt } from "./prompts/implement_types";
+import { implementEvolutionsPrompt } from "./prompts/implement_evolutions";
+import { testEvolvePrompt } from "./prompts/test_evolve";
+import { implementDecisionPrompt } from "./prompts/implement_decision";
+import { testOperationPrompt } from "./prompts/test_operation";
+import { generateUbistormerPrompt } from "./prompts/ubistormer";
+import { registerEventStormingTools } from "./tools/ubistorming/add-tools";
 const mcp = new FastMCP({
     name: 'Ubi Toolkit MCP Server',
     version: "1.0.0",
+    instructions: `
+        Ubi mcp server provides promts to AI-assisted Domain-driven Design
+        `
 });
 // addImplement(mcp)
 // mcp.on("connect", (event) => {
@@ -22,6 +27,21 @@ const mcp = new FastMCP({
 //   addGenerateDecider(mcp)(event.session)
 //   addGenerateTests(mcp)(event.session)
 // });
+registerEventStormingTools(mcp);
+mcp.addPrompt({
+    name: "ubistormer",
+    description: "Have a conversation with the user to collaborate on an EventStorming project",
+    arguments: [
+        {
+            name: "jsonUrl",
+            description: "The absolute path where the json containing the graph is",
+            required: true
+        },
+    ],
+    load: async (args) => {
+        return generateUbistormerPrompt(args);
+    }
+});
 mcp.addPrompt({
     name: "design_lifecycle_conversation",
     description: "Have a conversation to design a lifecycle.yaml file",
